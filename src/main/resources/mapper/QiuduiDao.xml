@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.QiuduiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.qiudui_name as qiuduiName
+        ,a.qiudui_uuid_number as qiuduiUuidNumber
+        ,a.qiudui_photo as qiuduiPhoto
+        ,a.qiudui_jiaiolian as qiuduiJiaiolian
+        ,a.qiudui_guojia as qiuduiGuojia
+        ,a.qiudui_address as qiuduiAddress
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.chuangjian_time as chuangjianTime
+        ,a.qiudui_types as qiuduiTypes
+        ,a.qiudui_clicknum as qiuduiClicknum
+        ,a.qiudui_content as qiuduiContent
+        ,a.qiudui_rongyu_content as qiuduiRongyuContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.QiuduiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM qiudui  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.qiuduiName != '' and params.qiuduiName != null and params.qiuduiName != 'null' ">
+                and a.qiudui_name like CONCAT('%',#{params.qiuduiName},'%')
+            </if>
+            <if test=" params.qiuduiUuidNumber != '' and params.qiuduiUuidNumber != null and params.qiuduiUuidNumber != 'null' ">
+                and a.qiudui_uuid_number like CONCAT('%',#{params.qiuduiUuidNumber},'%')
+            </if>
+            <if test=" params.qiuduiJiaiolian != '' and params.qiuduiJiaiolian != null and params.qiuduiJiaiolian != 'null' ">
+                and a.qiudui_jiaiolian like CONCAT('%',#{params.qiuduiJiaiolian},'%')
+            </if>
+            <if test=" params.qiuduiGuojia != '' and params.qiuduiGuojia != null and params.qiuduiGuojia != 'null' ">
+                and a.qiudui_guojia like CONCAT('%',#{params.qiuduiGuojia},'%')
+            </if>
+            <if test=" params.qiuduiAddress != '' and params.qiuduiAddress != null and params.qiuduiAddress != 'null' ">
+                and a.qiudui_address like CONCAT('%',#{params.qiuduiAddress},'%')
+            </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test=" params.chuangjianTimeStart != '' and params.chuangjianTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.chuangjian_time) >= UNIX_TIMESTAMP(#{params.chuangjianTimeStart}) ]]>
+            </if>
+            <if test=" params.chuangjianTimeEnd != '' and params.chuangjianTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.chuangjian_time) <= UNIX_TIMESTAMP(#{params.chuangjianTimeEnd}) ]]>
+            </if>
+            <if test="params.qiuduiTypes != null and params.qiuduiTypes != ''">
+                and a.qiudui_types = #{params.qiuduiTypes}
+            </if>
+            <if test="params.qiuduiClicknumStart != null and params.qiuduiClicknumStart != ''">
+                <![CDATA[  and a.qiudui_clicknum >= #{params.qiuduiClicknumStart}   ]]>
+            </if>
+            <if test="params.qiuduiClicknumEnd != null and params.qiuduiClicknumEnd != ''">
+                <![CDATA[  and a.qiudui_clicknum <= #{params.qiuduiClicknumEnd}   ]]>
+            </if>
+             <if test="params.qiuduiClicknum != null and params.qiuduiClicknum != ''">
+                and a.qiudui_clicknum = #{params.qiuduiClicknum}
+             </if>
+            <if test=" params.qiuduiContent != '' and params.qiuduiContent != null and params.qiuduiContent != 'null' ">
+                and a.qiudui_content like CONCAT('%',#{params.qiuduiContent},'%')
+            </if>
+            <if test=" params.qiuduiRongyuContent != '' and params.qiuduiRongyuContent != null and params.qiuduiRongyuContent != 'null' ">
+                and a.qiudui_rongyu_content like CONCAT('%',#{params.qiuduiRongyuContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

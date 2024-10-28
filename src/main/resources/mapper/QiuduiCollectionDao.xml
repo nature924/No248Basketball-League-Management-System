@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.QiuduiCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.qiudui_id as qiuduiId
+        ,a.yonghu_id as yonghuId
+        ,a.qiudui_collection_types as qiuduiCollectionTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.QiuduiCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,qiudui.qiudui_name as qiuduiName
+        ,qiudui.qiudui_uuid_number as qiuduiUuidNumber
+        ,qiudui.qiudui_photo as qiuduiPhoto
+        ,qiudui.qiudui_jiaiolian as qiuduiJiaiolian
+        ,qiudui.qiudui_guojia as qiuduiGuojia
+        ,qiudui.qiudui_address as qiuduiAddress
+        ,qiudui.zan_number as zanNumber
+        ,qiudui.cai_number as caiNumber
+        ,qiudui.chuangjian_time as chuangjianTime
+        ,qiudui.qiudui_types as qiuduiTypes
+        ,qiudui.qiudui_clicknum as qiuduiClicknum
+        ,qiudui.qiudui_content as qiuduiContent
+        ,qiudui.qiudui_rongyu_content as qiuduiRongyuContent
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+
+        FROM qiudui_collection  a
+        left JOIN qiudui qiudui ON a.qiudui_id = qiudui.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.qiuduiId != null and params.qiuduiId != ''">
+                and (
+                    a.qiudui_id = #{params.qiuduiId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test="params.qiuduiCollectionTypes != null and params.qiuduiCollectionTypes != ''">
+                and a.qiudui_collection_types = #{params.qiuduiCollectionTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断球队的id不为空 -->
+            <if test=" params.qiuduiIdNotNull != '' and params.qiuduiIdNotNull != null and params.qiuduiIdNotNull != 'null' ">
+                and a.qiudui_id IS NOT NULL
+            </if>
+            <if test=" params.qiuduiName != '' and params.qiuduiName != null and params.qiuduiName != 'null' ">
+                and qiudui.qiudui_name like CONCAT('%',#{params.qiuduiName},'%')
+            </if>
+            <if test=" params.qiuduiUuidNumber != '' and params.qiuduiUuidNumber != null and params.qiuduiUuidNumber != 'null' ">
+                and qiudui.qiudui_uuid_number like CONCAT('%',#{params.qiuduiUuidNumber},'%')
+            </if>
+            <if test=" params.qiuduiJiaiolian != '' and params.qiuduiJiaiolian != null and params.qiuduiJiaiolian != 'null' ">
+                and qiudui.qiudui_jiaiolian like CONCAT('%',#{params.qiuduiJiaiolian},'%')
+            </if>
+            <if test=" params.qiuduiGuojia != '' and params.qiuduiGuojia != null and params.qiuduiGuojia != 'null' ">
+                and qiudui.qiudui_guojia like CONCAT('%',#{params.qiuduiGuojia},'%')
+            </if>
+            <if test=" params.qiuduiAddress != '' and params.qiuduiAddress != null and params.qiuduiAddress != 'null' ">
+                and qiudui.qiudui_address like CONCAT('%',#{params.qiuduiAddress},'%')
+            </if>
+            <if test="params.zanNumberStart != null  and params.zanNumberStart != '' ">
+                <![CDATA[  and qiudui.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null  and params.zanNumberEnd != '' ">
+                <![CDATA[  and qiudui.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+            <if test="params.zanNumber != null  and params.zanNumber != '' ">
+                and qiudui.zan_number = #{params.zanNumber}
+            </if>
+            <if test="params.caiNumberStart != null  and params.caiNumberStart != '' ">
+                <![CDATA[  and qiudui.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null  and params.caiNumberEnd != '' ">
+                <![CDATA[  and qiudui.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+            <if test="params.caiNumber != null  and params.caiNumber != '' ">
+                and qiudui.cai_number = #{params.caiNumber}
+            </if>
+            <if test=" params.chuangjianTimeStart != '' and params.chuangjianTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(qiudui.chuangjian_time) >= UNIX_TIMESTAMP(#{params.chuangjianTimeStart}) ]]>
+            </if>
+            <if test=" params.chuangjianTimeEnd != '' and params.chuangjianTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(qiudui.chuangjian_time) <= UNIX_TIMESTAMP(#{params.chuangjianTimeEnd}) ]]>
+            </if>
+            <if test="params.qiuduiTypes != null  and params.qiuduiTypes != ''">
+                and qiudui.qiudui_types = #{params.qiuduiTypes}
+            </if>
+
+            <if test="params.qiuduiClicknumStart != null  and params.qiuduiClicknumStart != '' ">
+                <![CDATA[  and qiudui.qiudui_clicknum >= #{params.qiuduiClicknumStart}   ]]>
+            </if>
+            <if test="params.qiuduiClicknumEnd != null  and params.qiuduiClicknumEnd != '' ">
+                <![CDATA[  and qiudui.qiudui_clicknum <= #{params.qiuduiClicknumEnd}   ]]>
+            </if>
+            <if test="params.qiuduiClicknum != null  and params.qiuduiClicknum != '' ">
+                and qiudui.qiudui_clicknum = #{params.qiuduiClicknum}
+            </if>
+            <if test=" params.qiuduiContent != '' and params.qiuduiContent != null and params.qiuduiContent != 'null' ">
+                and qiudui.qiudui_content like CONCAT('%',#{params.qiuduiContent},'%')
+            </if>
+            <if test=" params.qiuduiRongyuContent != '' and params.qiuduiRongyuContent != null and params.qiuduiRongyuContent != 'null' ">
+                and qiudui.qiudui_rongyu_content like CONCAT('%',#{params.qiuduiRongyuContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(qiudui.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(qiudui.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
